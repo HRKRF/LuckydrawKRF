@@ -203,33 +203,56 @@
             overflow-y: auto;
         }
 
-        .winner-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 14px;
+        .winner-table-wrap {
             margin-top: 22px;
-        }
-
-        .winner-item {
-            background: #f8fafc;
-            border: 2px solid #00ADEE;
             border-radius: 14px;
-            padding: 16px 12px;
+            overflow: hidden;
+            border: 2px solid #facc15;
         }
 
-        .winner-item-name {
-            color: #dc2626;
-            font-size: 1.8rem;
+        .winner-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .winner-table th {
+            background: #00ADEE;
+            color: #ffffff;
+            padding: 12px 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            border-bottom: 3px solid #facc15;
+        }
+
+        .winner-table td {
+            padding: 12px 18px;
+            border-bottom: 1px solid #dbeafe;
+            font-size: 1.1rem;
+        }
+
+        .winner-table tbody tr:nth-child(even) { background-color: #eff8ff; }
+        .winner-table tbody tr:nth-child(odd) { background-color: #ffffff; }
+
+        .winner-cell-stt {
+            color: #0c4a6e;
+            font-weight: 900;
+            width: 50px;
+            text-align: center;
+        }
+
+        .winner-cell-name {
+            color: #0369a1;
             font-weight: 900;
             text-transform: uppercase;
         }
 
-        .winner-item-code {
-            color: #00ADEE;
-            font-size: 1.6rem;
-            font-weight: 900;
-            margin-top: 6px;
-            letter-spacing: 0.08em;
+        .winner-cell-dob {
+            color: #b45309;
+            font-weight: 800;
+            letter-spacing: 0.05em;
         }
 
         select {
@@ -437,9 +460,20 @@
     <!-- Winner Overlay & History Overlay (remains same logic) -->
     <div id="winner-overlay">
         <div class="winner-card shadow-2xl">
-            <h4 class="text-xl font-bold mb-2 text-gray-500 uppercase">CHÚC MỪNG QUÝ NHÀ PHÂN PHỐI VÀ ĐẠI LÝ</h4>
+            <h4 class="text-xl font-bold mb-2 text-gray-500 uppercase">CHÚC MỪNG THÀNH VIÊN NHÀ KÁ ĐÃ MAY MẮN NHẬN GIẢI</h4>
             <p class="text-lg font-bold text-[#00ADEE] mt-2" id="winner-prize-name">---</p>
-            <div id="winner-list" class="winner-grid"></div>
+            <div class="winner-table-wrap">
+                <table class="winner-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Họ và tên</th>
+                            <th>Ngày sinh</th>
+                        </tr>
+                    </thead>
+                    <tbody id="winner-list"></tbody>
+                </table>
+            </div>
             <button class="mt-8 px-10 py-3 bg-[#00ADEE] text-white rounded-full font-bold uppercase hover:bg-[#0090c7] transition shadow-xl" onclick="closeWinner()">Quay tiếp</button>
         </div>
     </div>
@@ -811,17 +845,17 @@
                 spinBtn.disabled = true;
                 spinBtn.innerText = "CHƯA CÓ DỮ LIỆU";
                 hintMsg.innerText = "Chưa tải được danh sách khách hàng - kiểm tra lại Sheet!";
-                hintMsg.classList.add('text-red-400');
+                hintMsg.classList.add('text-amber-400');
             } else if (noPlayersLeft) {
                 spinBtn.disabled = true;
                 spinBtn.innerText = "HẾT KHÁCH";
                 hintMsg.innerText = "Đã hết khách hàng hợp lệ để quay";
-                hintMsg.classList.add('text-red-400');
+                hintMsg.classList.add('text-amber-400');
             } else {
                 spinBtn.disabled = false;
                 spinBtn.innerText = "QUAY SỐ";
                 hintMsg.innerText = "NHẤN SPACE ĐỂ QUAY";
-                hintMsg.classList.remove('text-red-400');
+                hintMsg.classList.remove('text-amber-400');
             }
         }
 
@@ -926,17 +960,19 @@
             document.getElementById('winner-prize-name').innerText = `${firstWinner.prize}: ${firstWinner.prizeItem}`;
             const winnerList = document.getElementById('winner-list');
             winnerList.innerHTML = '';
-            winRecords.forEach((winner) => {
-                const item = document.createElement('div');
-                item.className = 'winner-item';
-                const name = document.createElement('div');
-                name.className = 'winner-item-name';
+            winRecords.forEach((winner, index) => {
+                const tr = document.createElement('tr');
+                const stt = document.createElement('td');
+                stt.className = 'winner-cell-stt';
+                stt.textContent = index + 1;
+                const name = document.createElement('td');
+                name.className = 'winner-cell-name';
                 name.textContent = winner.name;
-                const dob = document.createElement('div');
-                dob.className = 'winner-item-code';
+                const dob = document.createElement('td');
+                dob.className = 'winner-cell-dob';
                 dob.textContent = winner.dob || '';
-                item.append(name, dob);
-                winnerList.appendChild(item);
+                tr.append(stt, name, dob);
+                winnerList.appendChild(tr);
             });
             document.getElementById('winner-overlay').style.display = 'flex';
             const end = Date.now() + 5000;
