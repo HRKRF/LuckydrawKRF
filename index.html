@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIVOTEC - LUCKY DRAW</title>
+    <title>KAROFI - LUCKY DRAW</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -203,56 +203,92 @@
             overflow-y: auto;
         }
 
-        .winner-table-wrap {
+        .winner-list-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             margin-top: 22px;
-            border-radius: 14px;
-            overflow: hidden;
-            border: 2px solid #facc15;
         }
 
-        .winner-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
+        .winner-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(90deg, #eaf7ff 0%, #ffffff 65%);
+            border: 1px solid #cdebfb;
+            border-radius: 18px;
+            padding: 12px 22px;
+            box-shadow: 0 2px 6px rgba(0, 130, 190, 0.08);
         }
 
-        .winner-table th {
+        .winner-rank-circle {
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #00ADEE;
+            background: #ffffff;
+            color: #00ADEE;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .winner-avatar-circle {
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
             background: #00ADEE;
             color: #ffffff;
-            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 800;
-            text-transform: uppercase;
             font-size: 0.85rem;
-            letter-spacing: 0.05em;
-            border-bottom: 3px solid #facc15;
         }
 
-        .winner-table td {
-            padding: 12px 18px;
-            border-bottom: 1px solid #dbeafe;
-            font-size: 1.1rem;
-        }
-
-        .winner-table tbody tr:nth-child(even) { background-color: #eff8ff; }
-        .winner-table tbody tr:nth-child(odd) { background-color: #ffffff; }
-
-        .winner-cell-stt {
+        .winner-row-name {
+            flex: 1;
+            text-align: left;
+            font-weight: 900;
             color: #0c4a6e;
-            font-weight: 900;
-            width: 50px;
-            text-align: center;
-        }
-
-        .winner-cell-name {
-            color: #0369a1;
-            font-weight: 900;
+            font-size: 1.1rem;
             text-transform: uppercase;
         }
 
-        .winner-cell-dob {
-            color: #b45309;
+        .winner-row-dob {
+            flex-shrink: 0;
+            text-align: center;
+            min-width: 110px;
+        }
+
+        .winner-row-dob-value {
+            font-weight: 900;
+            color: #0369a1;
+            font-size: 1.05rem;
+        }
+
+        .winner-row-dob-label {
+            font-size: 0.62rem;
+            color: #7a94a8;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 2px;
+        }
+
+        .winner-row-prize-badge {
+            flex-shrink: 0;
+            background: #f4c430;
+            color: #3a2a12;
             font-weight: 800;
-            letter-spacing: 0.05em;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 999px;
+            white-space: nowrap;
         }
 
         select {
@@ -299,33 +335,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             overflow-x: auto;
         }
-
-        .public-winners-table {
-            width: 100%;
-            border-collapse: collapse;
-            color: #3a2a12;
-        }
-
-        .public-winners-table th {
-            background: #f4c430;
-            color: #3a2a12;
-            padding: 12px 16px;
-            text-align: left;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            border: none;
-        }
-
-        .public-winners-table td {
-            padding: 5px 10px;
-            border: none;
-            border-bottom: 1px solid #f0e2b8;
-            font-size: 0.95rem;
-            font-weight: 700;
-        }
-
-        .public-winners-table tbody tr:nth-child(even) { background-color: #fdf6e3; }
-        .public-winners-table tbody tr:nth-child(odd) { background-color: #ffffff; }
 
         #audio-toggle {
             position: fixed;
@@ -429,16 +438,7 @@
     <section class="px-4 pb-16 relative z-10" style="margin-top: 65px;">
         <h3 class="text-2xl md:text-3xl font-black text-center text-yellow-400 uppercase mb-6 drop-shadow-lg">Danh Sách Trúng Giải</h3>
         <div class="public-winners-card">
-            <table class="public-winners-table">
-                <thead>
-                    <tr>
-                        <th>Giải thưởng</th>
-                        <th>Họ và Tên</th>
-                        <th>Ngày Sinh</th>
-                    </tr>
-                </thead>
-                <tbody id="public-winners-body"></tbody>
-            </table>
+            <div class="winner-list-rows" id="public-winners-body"></div>
             <p id="public-winners-empty" class="text-center text-gray-400 italic py-6">Chưa có ai trúng giải</p>
         </div>
     </section>
@@ -462,18 +462,7 @@
         <div class="winner-card shadow-2xl">
             <h4 class="text-xl font-bold mb-2 text-gray-500 uppercase">CHÚC MỪNG THÀNH VIÊN NHÀ KÁ ĐÃ MAY MẮN NHẬN GIẢI</h4>
             <p class="text-lg font-bold text-[#00ADEE] mt-2" id="winner-prize-name">---</p>
-            <div class="winner-table-wrap">
-                <table class="winner-table">
-                    <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Họ và tên</th>
-                            <th>Ngày sinh</th>
-                        </tr>
-                    </thead>
-                    <tbody id="winner-list"></tbody>
-                </table>
-            </div>
+            <div class="winner-list-rows" id="winner-list"></div>
             <button class="mt-8 px-10 py-3 bg-[#00ADEE] text-white rounded-full font-bold uppercase hover:bg-[#0090c7] transition shadow-xl" onclick="closeWinner()">Quay tiếp</button>
         </div>
     </div>
@@ -954,6 +943,13 @@
             updatePrizeUI();
         }
 
+        function getInitials(fullName) {
+            const parts = (fullName || '').trim().split(/\s+/).filter(Boolean);
+            if (parts.length === 0) return '??';
+            if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+
         function showWinnerOverlay(winRecords) {
             playSound('win');
             const firstWinner = winRecords[0];
@@ -961,18 +957,33 @@
             const winnerList = document.getElementById('winner-list');
             winnerList.innerHTML = '';
             winRecords.forEach((winner, index) => {
-                const tr = document.createElement('tr');
-                const stt = document.createElement('td');
-                stt.className = 'winner-cell-stt';
-                stt.textContent = index + 1;
-                const name = document.createElement('td');
-                name.className = 'winner-cell-name';
-                name.textContent = winner.name;
-                const dob = document.createElement('td');
-                dob.className = 'winner-cell-dob';
-                dob.textContent = winner.dob || '';
-                tr.append(stt, name, dob);
-                winnerList.appendChild(tr);
+                const row = document.createElement('div');
+                row.className = 'winner-row';
+
+                const rank = document.createElement('div');
+                rank.className = 'winner-rank-circle';
+                rank.textContent = index + 1;
+
+                const avatar = document.createElement('div');
+                avatar.className = 'winner-avatar-circle';
+                avatar.textContent = getInitials(winner.name);
+
+                const nameEl = document.createElement('div');
+                nameEl.className = 'winner-row-name';
+                nameEl.textContent = winner.name;
+
+                const dobWrap = document.createElement('div');
+                dobWrap.className = 'winner-row-dob';
+                const dobValue = document.createElement('div');
+                dobValue.className = 'winner-row-dob-value';
+                dobValue.textContent = winner.dob || '';
+                const dobLabel = document.createElement('div');
+                dobLabel.className = 'winner-row-dob-label';
+                dobLabel.textContent = 'Ngày sinh';
+                dobWrap.append(dobValue, dobLabel);
+
+                row.append(rank, avatar, nameEl, dobWrap);
+                winnerList.appendChild(row);
             });
             document.getElementById('winner-overlay').style.display = 'flex';
             const end = Date.now() + 5000;
@@ -1054,19 +1065,38 @@
         }
 
         function renderPublicWinners() {
-            const tbody = document.getElementById('public-winners-body');
+            const container = document.getElementById('public-winners-body');
             const emptyMsg = document.getElementById('public-winners-empty');
             const sorted = [...winners].sort((a, b) => PRIZE_RANK_ORDER.indexOf(a.prize) - PRIZE_RANK_ORDER.indexOf(b.prize));
-            tbody.innerHTML = '';
+            container.innerHTML = '';
             sorted.forEach(w => {
-                const tr = document.createElement('tr');
-                const cells = [w.prize, w.name, w.dob];
-                cells.forEach(text => {
-                    const td = document.createElement('td');
-                    td.textContent = text || '';
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
+                const row = document.createElement('div');
+                row.className = 'winner-row';
+
+                const prizeBadge = document.createElement('div');
+                prizeBadge.className = 'winner-row-prize-badge';
+                prizeBadge.textContent = w.prize;
+
+                const avatar = document.createElement('div');
+                avatar.className = 'winner-avatar-circle';
+                avatar.textContent = getInitials(w.name);
+
+                const nameEl = document.createElement('div');
+                nameEl.className = 'winner-row-name';
+                nameEl.textContent = w.name || '';
+
+                const dobWrap = document.createElement('div');
+                dobWrap.className = 'winner-row-dob';
+                const dobValue = document.createElement('div');
+                dobValue.className = 'winner-row-dob-value';
+                dobValue.textContent = w.dob || '';
+                const dobLabel = document.createElement('div');
+                dobLabel.className = 'winner-row-dob-label';
+                dobLabel.textContent = 'Ngày sinh';
+                dobWrap.append(dobValue, dobLabel);
+
+                row.append(prizeBadge, avatar, nameEl, dobWrap);
+                container.appendChild(row);
             });
             emptyMsg.style.display = sorted.length ? 'none' : 'block';
         }
